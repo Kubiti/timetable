@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Summit Schedule</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #050A18; }
+
+  .schedule-section {
+    background: #050A18;
+    padding: 70px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .bg-orb { position: absolute; border-radius: 50%; pointer-events: none; }
+  .bg-orb-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+    top: -100px; left: -100px;
+  }
+  .bg-orb-2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(20,184,166,0.10) 0%, transparent 70%);
+    bottom: -50px; right: 10%;
+  }
+  .content-wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; }
+
+  .schedule-header { text-align: center; margin-bottom: 48px; }
+  .badge {
+    display: inline-block;
+    background: rgba(99,102,241,0.15); color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.3);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 5px 16px;
+    border-radius: 20px; margin-bottom: 16px;
+  }
+  .schedule-header h2 {
+    color: #f1f5f9; font-size: 36px; font-weight: 800;
+    letter-spacing: -0.5px; margin-bottom: 10px; line-height: 1.2;
+  }
+  .schedule-header h2 span {
+    background: linear-gradient(90deg, #818cf8, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .schedule-header p { color: #64748b; font-size: 15px; }
+  .header-line { display: flex; align-items: center; gap: 12px; justify-content: center; margin-top: 20px; }
+  .header-line-bar { height: 1px; width: 60px; background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5)); }
+  .header-line-bar.right { background: linear-gradient(90deg, rgba(99,102,241,0.5), transparent); }
+  .header-line-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; }
+
+  .actions-row { text-align: right; margin-bottom: 16px; }
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: transparent; color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.4);
+    padding: 9px 20px; font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    text-decoration: none; cursor: pointer; transition: all 0.2s; border-radius: 6px;
+  }
+  .btn-download:hover { background: rgba(99,102,241,0.12); border-color: rgba(99,102,241,0.7); color: #c7d2fe; }
+  .btn-download svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .schedule-card {
+    background: rgba(15,23,42,0.85);
+    border: 1px solid rgba(99,102,241,0.18);
+    border-radius: 12px; overflow: hidden;
+  }
+
+  .day-tabs {
+    display: flex;
+    background: rgba(8,14,31,0.9);
+    border-bottom: 1px solid rgba(99,102,241,0.15);
+    flex-wrap: wrap;
+  }
+  .day-tab {
+    flex: 1; min-width: 72px;
+    padding: 14px 8px; cursor: pointer;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #475569; border-bottom: 2px solid transparent;
+    transition: all 0.2s; text-align: center;
+    border-right: 1px solid rgba(99,102,241,0.1);
+  }
+  .day-tab:last-child { border-right: none; }
+  .day-tab .day-date {
+    display: block; font-size: 10px; font-weight: 400;
+    letter-spacing: 0.3px; margin-top: 3px;
+    text-transform: none; color: #334155; transition: color 0.2s;
+  }
+  .day-tab.active { color: #a5b4fc; border-bottom-color: #6366f1; background: rgba(99,102,241,0.08); }
+  .day-tab.active .day-date { color: #6366f1; }
+  .day-tab:hover:not(.active) { color: #94a3b8; background: rgba(99,102,241,0.04); }
+
+  .day-content { display: none; }
+  .day-content.active { display: block; }
+
+  .hall-row {
+    display: flex; align-items: center;
+    padding: 0 20px;
+    background: rgba(8,14,31,0.6);
+    border-bottom: 1px solid rgba(99,102,241,0.1);
+    flex-wrap: wrap;
+  }
+  .track-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #334155;
+    margin-right: 16px; flex-shrink: 0;
+  }
+  .hall-tab {
+    background: transparent; color: #475569;
+    border: none; border-bottom: 2px solid transparent;
+    padding: 12px 16px; cursor: pointer;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+    transition: all 0.2s; margin-bottom: -1px;
+  }
+  .hall-tab.active { color: #34d399; border-bottom-color: #34d399; }
+  .hall-tab:hover:not(.active) { color: #94a3b8; }
+
+  .hall-content { display: none; }
+  .hall-content.active { display: block; }
+
+  .session {
+    display: flex; gap: 20px; padding: 22px 24px;
+    border-bottom: 1px solid rgba(99,102,241,0.08);
+    align-items: flex-start; transition: background 0.2s; position: relative;
+  }
+  .session:last-child { border-bottom: none; }
+  .session:hover { background: rgba(99,102,241,0.04); }
+
+  .break-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 11px 24px;
+    border-bottom: 1px solid rgba(99,102,241,0.08);
+    background: rgba(8,14,31,0.5);
+  }
+  .break-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 15px; line-height: 1;
+  }
+  .break-icon.coffee { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+  .break-icon.lunch  { background: rgba(20,184,166,0.1);  border: 1px solid rgba(20,184,166,0.2); }
+  .break-label { font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
+  .break-label.coffee { color: #fbbf24; }
+  .break-label.lunch  { color: #34d399; }
+  .break-time { font-size: 11px; color: #334155; margin-top: 1px; }
+  .break-desc { font-size: 12px; color: #475569; margin-top: 2px; }
+
+  .session-left {
+    flex-shrink: 0; display: flex; flex-direction: column;
+    align-items: center; gap: 8px; width: 60px;
+  }
+  .avatar-ring {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1.5px solid rgba(99,102,241,0.35);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(99,102,241,0.08); overflow: hidden; flex-shrink: 0;
+  }
+  .avatar-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .avatar-initials { font-size: 14px; font-weight: 700; color: #818cf8; letter-spacing: -0.5px; }
+
+  .session-body { flex: 1; min-width: 0; }
+  .session-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; flex-wrap: wrap; }
+  .session-time { font-size: 12px; font-weight: 700; color: #34d399; letter-spacing: 0.5px; }
+  .session-track-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 9px; border-radius: 20px;
+  }
+  .track-ml     { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+  .track-infra  { background: rgba(20,184,166,0.12);  color: #5eead4; border: 1px solid rgba(20,184,166,0.25); }
+  .track-ethics { background: rgba(245,158,11,0.12);  color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+  .track-product{ background: rgba(236,72,153,0.12);  color: #f9a8d4; border: 1px solid rgba(236,72,153,0.2); }
+
+  .session-title { color: #e2e8f0; font-size: 15px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; }
+  .session-title a { color: #e2e8f0; text-decoration: none; transition: color 0.2s; }
+  .session-title a:hover { color: #818cf8; }
+  .session-desc { color: #475569; font-size: 13px; line-height: 1.65; margin-bottom: 9px; }
+  .session-speaker { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+  .session-speaker-dot { width: 3px; height: 3px; border-radius: 50%; background: #334155; flex-shrink: 0; }
+  .session-speaker strong { color: #94a3b8; font-weight: 600; }
+
+  .keynote-badge {
+    position: absolute; top: 22px; right: 20px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #fcd34d;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .session { flex-direction: column; gap: 12px; padding: 16px; }
+    .session-left { flex-direction: row; width: auto; }
+    .schedule-header h2 { font-size: 24px; }
+    .day-tab { min-width: 56px; padding: 10px 6px; font-size: 10px; }
+    .hall-tab { padding: 10px 10px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="schedule-section">
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="content-wrap">
+    <div class="schedule-header">
+      <!-- <div class="badge">&#9632; AI Summit 2025</div> -->
+      <h2>Conference <span>Schedule</span></h2>
+      <p>Five days exploring the frontiers of artificial intelligence</p>
+      <div class="header-line">
+        <div class="header-line-bar"></div>
+        <div class="header-line-dot"></div>
+        <div class="header-line-bar right"></div>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <a href="#" class="btn-download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 2v8M5 7l3 3 3-3M3 12h10" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download Schedule
+      </a>
+    </div>
+      
+    <div class="schedule-card">
+      <div class="day-tabs">
+        <div class="day-tab active" onclick="switchDay('day1',this)">Day 01<span class="day-date">June 29</span></div>
+        <div class="day-tab" onclick="switchDay('day2',this)">Day 02<span class="day-date">June 30</span></div>
+        <div class="day-tab" onclick="switchDay('day3',this)">Day 03<span class="day-date">July 1</span></div>
+        <div class="day-tab" onclick="switchDay('day4',this)">Day 04<span class="day-date">July 2</span></div>
+        <div class="day-tab" onclick="switchDay('day5',this)">Day 05<span class="day-date">July 3</span></div>
+      </div>
+
+      <!-- ══════════ DAY 1 ══════════ -->
+      <div class="day-content active" id="day1">
+        <!-- <div class="hall-row">
+          <span class="track-label">Track</span>
+          <button class="hall-tab active" onclick="switchHall('day1','ml',this)">ML Research</button>
+          <button class="hall-tab" onclick="switchHall('day1','infra',this)">AI Infrastructure</button>
+          <button class="hall-tab" onclick="switchHall('day1','ethics',this)">AI Ethics</button>
+          <button class="hall-tab" onclick="switchHall('day1','product',this)">AI Product</button>
+        </div> -->
+        <div class="hall-content active" id="day1-ml">
+          <div class="session">
+            <div class="keynote-badge">Keynote</div>
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">EP</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Artificial Intelligence for Sustainable Development (AI4SD)</a></h3>
+              <p class="session-desc">A deep technical dive into agentic AI architectures — tool use, memory systems, planning under uncertainty, and the open problems between today's demos and reliable autonomous deployment.</p>
+              <div class="session-speaker"><strong>Dr. Daniel Adjei</strong><span class="session-speaker-dot"></span>FEF-AI4SD Project Lead, Université Paris Saclay</div>
+            </div>
+          </div>
+
+
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">BN</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:00 – 10:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Retrieval-Augmented Generation: State of the Art</a></h3>
+              <p class="session-desc">Advances in RAG pipeline design — dense vs. sparse retrieval, late interaction models, reranking, and how to evaluate retrieval quality end-to-end rather than in isolation.</p>
+              <div class="session-speaker"><strong>Ben Nakamura</strong><span class="session-speaker-dot"></span>Research Scientist, Cohere</div>
+            </div>
+          </div>
+
+
+
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:30 – 11:00</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+
+
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">GR</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">11:00 – 11:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Mixture of Experts: Architecture, Routing, and Training Dynamics</a></h3>
+              <p class="session-desc">How MoE architectures achieve GPT-4 class quality at a fraction of the active parameters — routing mechanisms, load balancing, expert collapse, and what the next generation of sparse models looks like.</p>
+              <div class="session-speaker"><strong>Gabriel Rossi</strong><span class="session-speaker-dot"></span>Research Engineer, Mistral AI</div>
+            </div>
+          </div>
+
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">BN</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">11:00 – 12:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Retrieval-Augmented Generation: State of the Art</a></h3>
+              <p class="session-desc">Advances in RAG pipeline design — dense vs. sparse retrieval, late interaction models, reranking, and how to evaluate retrieval quality end-to-end rather than in isolation.</p>
+              <div class="session-speaker"><strong>Ben Nakamura</strong><span class="session-speaker-dot"></span>Research Scientist, Cohere</div>
+            </div>
+          </div>
+
+
+
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">HW</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Long-Context Models: Architecture and Attention Tricks</a></h3>
+              <p class="session-desc">How models are being extended to million-token contexts — rope scaling, sliding window attention, and hybrid architectures — and the open questions around retrieval quality at long range.</p>
+              <div class="session-speaker"><strong>Hana Wei</strong><span class="session-speaker-dot"></span>Research Engineer, Together AI</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div> -->
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">SS</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">14:00 – 14:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Synthetic Data: Scaling Intelligence Without the Internet</a></h3>
+              <p class="session-desc">How synthetic data generation is being used to augment real training data — quality filtering, model collapse risks, and domains where synthetic data already outperforms scraping.</p>
+              <div class="session-speaker"><strong>Sofia Santos</strong><span class="session-speaker-dot"></span>Research Lead, Scale AI</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day2-infra">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">LM</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:50</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">MLOps in 2025: From Experiment to Production</a></h3>
+              <p class="session-desc">Model versioning, experiment tracking, deployment pipelines, and monitoring strategies that scale from a solo researcher to a 50-person ML platform team.</p>
+              <div class="session-speaker"><strong>Lena Müller</strong><span class="session-speaker-dot"></span>MLOps Lead, Weights &amp; Biases</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">TD</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Vector Databases at Production Scale</a></h3>
+              <p class="session-desc">Choosing between Pinecone, Weaviate, Chroma, and pgvector — indexing strategies, query performance benchmarks, and architecture patterns for embedding-heavy AI applications.</p>
+              <div class="session-speaker"><strong>Tyler Diaz</strong><span class="session-speaker-dot"></span>Staff Engineer, Pinecone</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day2-ethics">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">CJ</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:00 – 11:00</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">AI and Labour: Displacement, Augmentation, and Policy</a></h3>
+              <p class="session-desc">Economic modelling of AI's labour market impact — which roles are most exposed, where augmentation is winning, and what policy interventions have shown early evidence of working.</p>
+              <div class="session-speaker"><strong>Dr. Carlos Johnson</strong><span class="session-speaker-dot"></span>Labour Economist, Oxford</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day2-product">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">NS</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:15</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">Prompt Engineering is Dead. Long Live System Design.</a></h3>
+              <p class="session-desc">Why chasing perfect prompts is the wrong abstraction, and how to think about AI product quality through the lens of system design, evaluation pipelines, and feedback loops instead.</p>
+              <div class="session-speaker"><strong>Nina Shah</strong><span class="session-speaker-dot"></span>AI Product Lead, Notion</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:15 – 10:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">JA</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:45 – 11:30</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">Evaluation Frameworks for AI Features</a></h3>
+              <p class="session-desc">Building robust evals that catch regressions before they reach users — LLM-as-judge patterns, human eval sampling, and the metrics that actually correlate with user satisfaction.</p>
+              <div class="session-speaker"><strong>James Adeyemi</strong><span class="session-speaker-dot"></span>Head of Evals, Anthropic</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+             <!-- ══════════ DAY 2 ══════════ -->
+      <div class="day-content" id="day2">
+        <!-- <div class="hall-row">
+          <span class="track-label">Track</span>
+          <button class="hall-tab active" onclick="switchHall('day1','ml',this)">ML Research</button>
+          <button class="hall-tab" onclick="switchHall('day1','infra',this)">AI Infrastructure</button>
+          <button class="hall-tab" onclick="switchHall('day1','ethics',this)">AI Ethics</button>
+          <button class="hall-tab" onclick="switchHall('day1','product',this)">AI Product</button>
+        </div> -->
+        <div class="hall-content active" id="day2-ml">
+          <div class="session">
+            <div class="keynote-badge">Keynote</div>
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">DP</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Edge AI for Sustainable Intelligent Systems: From TinyML to Self-Powered Sensing</a></h3>
+              <p class="session-desc">Edge AI, powered by low-power TinyML, is revolutionising intelligent systems by bringing computation closer to data sources. The presentation explores strategies for designing efficient, scalable, and sustainable systems with social applications.</p>
+              <div class="session-speaker"><strong>Dr. Derek Kwaku Pobi Asied</strong><span class="session-speaker-dot"></span>Associate Professor, IMT Atlantic</div>
+            </div>
+          </div>
+
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">EA</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:00 – 10:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Interactive Sign Language Translation in Healthcare Using 3D Avatars and Temporal Modeling</a></h3>
+              <p class="session-desc">We present SignTalk, a dual-module system enabling bidirectional translation between sign language videos and textual sentences within a hospital domain.</p>
+              <div class="session-speaker"><strong>Dr. Emmanuel Ahene</strong><span class="session-speaker-dot"></span>Senior Lecturer, Kwame Nkrumah University of Science and Technology</div>
+            </div>
+          </div>
+
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:30 – 11:00</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">FW</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Towards Sustainable Precision Agriculture: Self-Powered Edge TinyML with Backscatter Communication for Plant Disease Detection</a></h3>
+              <p class="session-desc">A framework for detecting plant diseases using Edge TinyML is presented, focusing on sustainable precision agriculture. The system, which operates without batteries, combines on-device image inference, RF energy harvesting, and backscatter communication.</p>
+              <div class="session-speaker"><strong>Fortunatus Aabangbio Wulnye</strong><span class="session-speaker-dot"></span>Graduate Student, IMT Atlantic</div>
+            </div>
+          </div>
+
+          
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">MT</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">11:00 – 12:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">The Future Of Artificial Intelligence In Criminal Law Proceedings And Human Rights Justice</a></h3>
+              <p class="session-desc">This article examines Artificial Intelligence role in criminal defence within Africa's legal system, highlighting benefits like improved legal analysis, precedent search, and decision prediction, while addressing risks of traditional proceedings, bias and insufficient regulatory oversight.</p>
+              <div class="session-speaker"><strong>Peter Kpabitey</strong><span class="session-speaker-dot"></span>Information & Technology Systems Globe Assistant, Nestle Ghana Limited</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">KP</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Diffusion Models Beyond Images: Audio, Video and 3D</a></h3>
+              <p class="session-desc">How diffusion architectures have been adapted for non-image modalities, unique challenges of temporal coherence in video and audio, and state-of-the-art results in 3D generation.</p>
+              <div class="session-speaker"><strong>Kenji Park</strong><span class="session-speaker-dot"></span>Research Scientist, Stability AI</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div> -->
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">OB</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">14:45 – 15:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Interpretability Research: Opening the Black Box</a></h3>
+              <p class="session-desc">Latest advances in mechanistic interpretability — superposition, circuit analysis, and sparse autoencoders — and what they're revealing about how transformers actually represent and process information.</p>
+              <div class="session-speaker"><strong>Dr. Olivia Brown</strong><span class="session-speaker-dot"></span>Interpretability Lead, Anthropic</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day1-infra">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">AK</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:45</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Inference at Scale: Serving LLMs for Millions of Users</a></h3>
+              <p class="session-desc">Batching strategies, KV-cache management, speculative decoding, and hardware co-design decisions that reduce inference cost by 10x without degrading output quality.</p>
+              <div class="session-speaker"><strong>Aisha Khan</strong><span class="session-speaker-dot"></span>VP Infrastructure, OpenAI</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">JP</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">GPU Clusters to TPU Pods: Choosing Your Training Stack</a></h3>
+              <p class="session-desc">An honest comparison of H100 clusters vs. TPU v5e pods for large-scale training workloads, covering TCO, throughput, fault tolerance, and ecosystem maturity.</p>
+              <div class="session-speaker"><strong>Ji-ho Park</strong><span class="session-speaker-dot"></span>ML Infrastructure, Meta AI</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:15 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">RV</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:15</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Distributed Training: Lessons from 10,000-GPU Runs</a></h3>
+              <p class="session-desc">Pipeline, tensor, and data parallelism strategies — when to combine them, failure modes to expect, and checkpoint strategies that don't cost you days of compute.</p>
+              <div class="session-speaker"><strong>Ravi Varma</strong><span class="session-speaker-dot"></span>Systems Engineer, NVIDIA</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div> -->
+        </div>
+        <div class="hall-content" id="day1-ethics">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">FO</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:30</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">Bias, Fairness and Representation in Foundation Models</a></h3>
+              <p class="session-desc">Systematic auditing methodologies for detecting representational harm in large models, with case studies from hiring, healthcare, and legal AI deployments.</p>
+              <div class="session-speaker"><strong>Dr. Fatima Osei</strong><span class="session-speaker-dot"></span>AI Ethics Chair, MIT</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:30 – 11:00</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">RN</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">11:00 – 11:45</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">Regulatory Landscape: EU AI Act and What's Next</a></h3>
+              <p class="session-desc">A practical breakdown of compliance obligations under the EU AI Act, expected US federal frameworks, and how AI teams should structure governance processes today.</p>
+              <div class="session-speaker"><strong>Rachel Novak</strong><span class="session-speaker-dot"></span>Tech Policy Lead, Mozilla</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:15 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day1-product">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">DW</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:45</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">Designing AI Features Users Actually Trust</a></h3>
+              <p class="session-desc">UX research findings on how users form trust with AI systems — what builds confidence, what destroys it, and the interaction patterns that make AI feel like a collaborator rather than a black box.</p>
+              <div class="session-speaker"><strong>Dana Wu</strong><span class="session-speaker-dot"></span>Head of AI Design, Figma</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">PL</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">From Zero to AI Product: A Practical Playbook</a></h3>
+              <p class="session-desc">How to scope an AI product initiative, define success metrics, choose the right model tier, and ship a v1 without over-engineering — lessons from a dozen product launches.</p>
+              <div class="session-speaker"><strong>Priya Lim</strong><span class="session-speaker-dot"></span>Director of Product, Cohere</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:15 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+     </div>
+
+
+      <!-- ══════════ DAY 3 ══════════ -->
+      <div class="day-content" id="day3">
+        <!-- <div class="hall-row">
+          <span class="track-label">Track</span>
+          <button class="hall-tab active" onclick="switchHall('day3','ml',this)">ML Research</button>
+          <button class="hall-tab" onclick="switchHall('day3','infra',this)">AI Infrastructure</button>
+          <button class="hall-tab" onclick="switchHall('day3','ethics',this)">AI Ethics</button>
+          <button class="hall-tab" onclick="switchHall('day3','product',this)">AI Product</button>
+        </div> -->
+        <div class="hall-content active" id="day3-ml">
+          <div class="session">
+            <div class="keynote-badge">Keynote</div>
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">IA</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Towards General Intelligence: Benchmarks, Failures, and Honest Assessment</a></h3>
+              <p class="session-desc">A critical examination of current AGI progress claims — which benchmarks measure generalisation, where today's models fall short, and what milestones would constitute meaningful progress.</p>
+              <div class="session-speaker"><strong>Prof. Ifeoma Adeyemi</strong><span class="session-speaker-dot"></span>AI Safety Lead, Cambridge</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">TG</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Neurosymbolic AI: Combining Learning and Reasoning</a></h3>
+              <p class="session-desc">Hybrid systems that integrate neural networks with symbolic reasoning modules — recent results, remaining challenges, and where this approach outperforms purely connectionist alternatives.</p>
+              <div class="session-speaker"><strong>Thomas Gruber</strong><span class="session-speaker-dot"></span>Senior Researcher, IBM Research</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">AL</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Small Models, Big Impact: Efficient Architectures for Edge Deployment</a></h3>
+              <p class="session-desc">State-space models, Mamba, and hybrid approaches challenging transformer dominance at sub-10B parameter scale — benchmarks, deployment results, and architectural trade-offs.</p>
+              <div class="session-speaker"><strong>Amara Lee</strong><span class="session-speaker-dot"></span>ML Research, Apple</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div> -->
+        </div>
+        <div class="hall-content" id="day3-infra">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">ZC</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:50</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Quantization, Pruning, and Distillation for Edge AI</a></h3>
+              <p class="session-desc">Practical model compression techniques that get 70B-parameter capabilities onto consumer hardware — trade-offs, tooling, and where quality collapses under aggressive compression.</p>
+              <div class="session-speaker"><strong>Zara Chen</strong><span class="session-speaker-dot"></span>Edge AI Lead, Qualcomm</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day3-ethics">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">PW</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:00 – 11:00</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">AI Safety: From Theory to Engineering Practice</a></h3>
+              <p class="session-desc">How safety concepts like interpretability, robustness, and corrigibility translate into concrete engineering practices at AI labs shipping products to millions of users today.</p>
+              <div class="session-speaker"><strong>Dr. Paul Winter</strong><span class="session-speaker-dot"></span>Safety Research, Redwood Research</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day3-product">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">AM</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:15</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">Monetising AI: Business Models That Actually Work</a></h3>
+              <p class="session-desc">A data-driven look at AI product monetisation strategies showing strong retention and unit economics — subscriptions, usage-based, embedded vs. standalone — with real-world conversion benchmarks.</p>
+              <div class="session-speaker"><strong>Aria Mehta</strong><span class="session-speaker-dot"></span>VP Product, Runway</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:15 – 10:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ DAY 4 ══════════ -->
+      <div class="day-content" id="day4">
+        <!-- <div class="hall-row">
+          <span class="track-label">Track</span>
+          <button class="hall-tab active" onclick="switchHall('day4','ml',this)">ML Research</button>
+          <button class="hall-tab" onclick="switchHall('day4','infra',this)">AI Infrastructure</button>
+          <button class="hall-tab" onclick="switchHall('day4','ethics',this)">AI Ethics</button>
+          <button class="hall-tab" onclick="switchHall('day4','product',this)">AI Product</button>
+        </div> -->
+        <div class="hall-content active" id="day4-ml">
+          <div class="session">
+            <div class="keynote-badge">Keynote</div>
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">DK</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">AI and Scientific Discovery: From Protein Folding to Drug Design</a></h3>
+              <p class="session-desc">How foundation models trained on scientific data are accelerating research cycles in biology, chemistry, and materials science — real results from the lab, not just benchmarks.</p>
+              <div class="session-speaker"><strong>Dr. David Kim</strong><span class="session-speaker-dot"></span>Research Scientist, Google DeepMind</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">NF</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Chain-of-Thought, Reasoning Models, and Test-Time Compute</a></h3>
+              <p class="session-desc">A technical deep dive into why chain-of-thought prompting works, how o1-style reasoning models allocate test-time compute, and the research frontier on learned reasoning strategies.</p>
+              <div class="session-speaker"><strong>Nadia Fernandez</strong><span class="session-speaker-dot"></span>Research Scientist, OpenAI</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">GR</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Mixture of Experts: Architecture, Routing, and Training Dynamics</a></h3>
+              <p class="session-desc">How MoE architectures achieve GPT-4 class quality at a fraction of the active parameters — routing mechanisms, load balancing, expert collapse, and what the next generation of sparse models looks like.</p>
+              <div class="session-speaker"><strong>Gabriel Rossi</strong><span class="session-speaker-dot"></span>Research Engineer, Mistral AI</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div> -->
+        </div>
+        <div class="hall-content" id="day4-infra">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">MC</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:50</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Fine-Tuning Pipelines: LoRA, QLoRA, and Full Fine-Tune Trade-offs</a></h3>
+              <p class="session-desc">When to fine-tune vs. prompt, how to set up an efficient fine-tuning pipeline with parameter-efficient methods, and quality vs. cost trade-offs across different adaptation strategies.</p>
+              <div class="session-speaker"><strong>Maya Chen</strong><span class="session-speaker-dot"></span>ML Platform Lead, Hugging Face</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day4-ethics">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">SO</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:30</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">AI in Healthcare: Promise, Peril, and Governance</a></h3>
+              <p class="session-desc">Real-world deployments of AI in clinical settings — diagnostic tools, treatment planning, patient communication — with honest reporting on failure modes and the governance structures that caught them.</p>
+              <div class="session-speaker"><strong>Dr. Samuel Okonkwo</strong><span class="session-speaker-dot"></span>Clinical AI Lead, NHS England</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:30 – 11:00</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day4-product">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">VT</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:15</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">AI Copilots: What's Working in Enterprise Deployments</a></h3>
+              <p class="session-desc">Adoption data and outcome metrics from enterprise AI copilot rollouts across legal, finance, and engineering — what drives sustained usage, what causes abandonment, and integration patterns that matter.</p>
+              <div class="session-speaker"><strong>Valentina Torres</strong><span class="session-speaker-dot"></span>Enterprise AI Lead, Microsoft</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:15 – 10:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Lunch Break</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Buffet lunch — Hall B dining area</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ DAY 5 ══════════ -->
+      <div class="day-content" id="day5">
+        <!-- <div class="hall-row">
+          <span class="track-label">Track</span>
+          <button class="hall-tab active" onclick="switchHall('day5','ml',this)">ML Research</button>
+          <button class="hall-tab" onclick="switchHall('day5','infra',this)">AI Infrastructure</button>
+          <button class="hall-tab" onclick="switchHall('day5','ethics',this)">AI Ethics</button>
+          <button class="hall-tab" onclick="switchHall('day5','product',this)">AI Product</button>
+        </div> -->
+        <div class="hall-content active" id="day5-ml">
+          <div class="session">
+            <div class="keynote-badge">Closing Keynote</div>
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">MA</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:00</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">The Next Five Years: A Research Agenda for Beneficial AI</a></h3>
+              <p class="session-desc">A forward-looking keynote on the open research problems that matter most — scalable oversight, robustness, interpretability, and alignment — and how the community should prioritise them.</p>
+              <div class="session-speaker"><strong>Dr. Maya Alvarez</strong><span class="session-speaker-dot"></span>Chief Scientist, Anthropic</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">IB</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">10:30 – 11:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Constitutional AI and Value Alignment: Current State</a></h3>
+              <p class="session-desc">A frank assessment of where RLAIF and constitutional approaches have succeeded and fallen short — lessons from deployment at scale and the research directions that show most promise.</p>
+              <div class="session-speaker"><strong>Ivan Basov</strong><span class="session-speaker-dot"></span>Alignment Researcher, ARC</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Farewell Lunch</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Closing lunch &amp; networking — Main Hall</div>
+            </div>
+          </div>
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">LN</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">13:30 – 14:15</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Open Source vs. Closed: What the Data Says About Model Quality</a></h3>
+              <p class="session-desc">A systematic comparison of open-weight and proprietary models across coding, reasoning, instruction-following, and safety benchmarks — and what the trend lines suggest about the future of the field.</p>
+              <div class="session-speaker"><strong>Li Na</strong><span class="session-speaker-dot"></span>Research Lead, EleutherAI</div>
+            </div>
+          </div>
+          <!-- <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Afternoon Coffee</div>
+              <div class="break-time">14:15 – 14:45</div>
+              <div class="break-desc">Last chance to connect before close</div>
+            </div>
+          </div> -->
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">PD</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">14:45 – 15:30</span><span class="session-track-badge track-ml">ML Research</span></div>
+              <h3 class="session-title"><a href="#">Panel: The Unsolved Problems in AI — A Researcher Roundtable</a></h3>
+              <p class="session-desc">A candid discussion between five senior researchers on problems the field is systematically underinvesting in — and what it would take to make real progress on each of them.</p>
+              <div class="session-speaker"><strong>Panel</strong><span class="session-speaker-dot"></span>Moderated by Paul Doshi, Stanford HAI</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day5-infra">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">CB</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:00 – 09:50</span><span class="session-track-badge track-infra">Infrastructure</span></div>
+              <h3 class="session-title"><a href="#">Cost Optimisation for AI Startups: From $0 to $1M in Compute</a></h3>
+              <p class="session-desc">Practical strategies for managing compute costs at each stage of an AI startup — when to use APIs vs. host your own, spot instance strategies, and the infra decisions that don't age well.</p>
+              <div class="session-speaker"><strong>Carlos Bautista</strong><span class="session-speaker-dot"></span>CTO, Modal Labs</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:00 – 10:30</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Farewell Lunch</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Closing lunch &amp; networking — Main Hall</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day5-ethics">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">EM</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:30</span><span class="session-track-badge track-ethics">AI Ethics</span></div>
+              <h3 class="session-title"><a href="#">Deepfakes, Synthetic Media, and Information Integrity</a></h3>
+              <p class="session-desc">The current state of synthetic media detection, watermarking standards, and platform-level interventions — what's working, what's failing, and what policymakers need to understand about the arms race.</p>
+              <div class="session-speaker"><strong>Dr. Esi Mensah</strong><span class="session-speaker-dot"></span>Digital Trust Lead, Partnership on AI</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:30 – 11:00</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Farewell Lunch</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Closing lunch &amp; networking — Main Hall</div>
+            </div>
+          </div>
+        </div>
+        <div class="hall-content" id="day5-product">
+          <div class="session">
+            <div class="session-left"><div class="avatar-ring"><span class="avatar-initials">OJ</span></div></div>
+            <div class="session-body">
+              <div class="session-meta"><span class="session-time">09:30 – 10:15</span><span class="session-track-badge track-product">AI Product</span></div>
+              <h3 class="session-title"><a href="#">What Users Actually Want: AI Product Research Findings</a></h3>
+              <p class="session-desc">Qualitative and quantitative research on how people think about and interact with AI products — mental models, frustration points, and the feature requests that surface again and again across demographics.</p>
+              <div class="session-speaker"><strong>Omar Jabari</strong><span class="session-speaker-dot"></span>Head of UX Research, Perplexity</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon coffee">☕</div>
+            <div class="break-info">
+              <div class="break-label coffee">Morning Coffee</div>
+              <div class="break-time">10:15 – 10:45</div>
+              <div class="break-desc">Refreshments in the main atrium</div>
+            </div>
+          </div>
+          <div class="break-row">
+            <div class="break-icon lunch">🍽</div>
+            <div class="break-info">
+              <div class="break-label lunch">Farewell Lunch</div>
+              <div class="break-time">12:00 – 13:30</div>
+              <div class="break-desc">Closing lunch &amp; networking — Main Hall</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+function switchDay(dayId, tab) {
+  document.querySelectorAll('.day-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.day-tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(dayId).classList.add('active');
+  tab.classList.add('active');
+}
+function switchHall(dayId, hallId, tab) {
+  var day = document.getElementById(dayId);
+  day.querySelectorAll('.hall-content').forEach(function(el){el.classList.remove('active');});
+  day.querySelectorAll('.hall-tab').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(dayId+'-'+hallId).classList.add('active');
+  tab.classList.add('active');
+}
+</script>
+</body>
+</html>
